@@ -1,0 +1,53 @@
+# ══════════════════════════════════════════════════════════════════════════════
+# GitHub Actions – RPICT Reader Build
+# Kompiliert automatisch bei jedem Push fuer alle 3 Boards.
+# Fertige .bin Dateien werden als Release-Artefakte gespeichert.
+# ══════════════════════════════════════════════════════════════════════════════
+
+name: PlatformIO Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        environment: [esp32, esp32c3, esp8266]
+
+    name: Build [${{ matrix.environment }}]
+
+    steps:
+
+      # ── Code auschecken ────────────────────────────────────────────────────
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # ── Python + PlatformIO installieren ───────────────────────────────────
+      - name: Python einrichten
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: PlatformIO installieren
+        run: pip install platformio
+
+      # ── Kompilieren ────────────────────────────────────────────────────────
+      - name: Build ${{ matrix.environment }}
+        run: platformio run --environment ${{ matrix.environment }}
+
+      # ── .bin als Artefakt speichern ────────────────────────────────────────
+      - name: Firmware speichern
+        uses: actions/upload-artifact@v4
+        with:
+          name: firmware-${{ matrix.environment }}
+          path: |
+            .pio/build/${{ matrix.environment }}/firmware.bin
+            .pio/build/${{ matrix.environment }}/firmware.elf
+          if-no-files-found: warn
+          retention-days: 30
