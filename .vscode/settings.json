@@ -1,0 +1,14 @@
+{
+  "editor.tabSize": 2,
+  "editor.formatOnSave": false,
+  "C_Cpp.intelliSenseEngine": "default",
+  "C_Cpp.default.includePath": [
+    "${workspaceFolder}/**",
+    "${workspaceFolder}/.pio/libdeps/**"
+  ],
+  "files.associations": {
+    "*.ino": "cpp",
+    "*.h":   "cpp"
+  },
+  "platformio-ide.startupShowHomeScreen": false
+}
